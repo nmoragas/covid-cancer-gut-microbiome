@@ -107,25 +107,24 @@ clr_transform <- function(x) {
 }
 
 # -----------------------------------------------------------------------------
-# Covariate encoding for LASSO models
+# Covariate encoding for LASSO models (as used in the published models)
 # -----------------------------------------------------------------------------
-#' Numeric, centred encoding of clinical covariates.
-#'   age          -> (age / 10) centred at 0
-#'   binary vars  -> -0.5 / +0.5
-#'   ordinal vars -> -1 / 0 / +1
+#'   age          -> (age / 10), centred at 0
+#'   categorical  -> factor levels in alphabetical order, centred:
+#'                   2 levels -> -0.5 / +0.5 ; 3 levels -> -1 / 0 / +1
+#' Resulting codes:
+#'   vaccination          no = -0.5, yes = +0.5
+#'   any_comorbidity_data No = -0.5, Yes = +0.5
+#'   abx                  FALSE = -0.5, TRUE = +0.5
+#'   tumor_status         Active = -0.5, Remission = +0.5
+#'   tumor_stage          localized = -1, loco-regional = 0, metastatic = +1
+#'   smoke                active smoker = -1, ex smoker = 0, non smoker = +1
 encode_covariates <- function(meta, vars) {
-  enc <- list(
-    age                  = function(x) { x <- as.numeric(x) / 10; x - mean(x, na.rm = TRUE) },
-    vaccination          = function(x) as.numeric(factor(x, levels = c("no", "yes"))) - 1.5,
-    any_comorbidity_data = function(x) as.numeric(factor(x, levels = c("No", "Yes"))) - 1.5,
-    smoke                = function(x) as.numeric(factor(x, levels = c("non smoker", "ex smoker", "active smoker"))) - 2,
-    tumor_stage          = function(x) as.numeric(factor(x, levels = c("localized", "loco-regional", "metastatic"))) - 2,
-    tumor_status         = function(x) as.numeric(factor(x, levels = c("Resmision", "Active"))) - 1.5,
-    abx                  = function(x) as.numeric(factor(x, levels = c("FALSE", "TRUE"))) - 1.5
-  )
   out <- sapply(vars, function(v) {
-    if (!v %in% names(enc)) stop("No encoding defined for covariate '", v, "'")
-    enc[[v]](meta[[v]])
+    x <- meta[[v]]
+    if (v == "age") { x <- as.numeric(x) / 10; return(x - mean(x, na.rm = TRUE)) }
+    f <- factor(as.character(x))
+    as.numeric(f) - (nlevels(f) + 1) / 2
   })
   out <- as.data.frame(out)
   rownames(out) <- rownames(meta)

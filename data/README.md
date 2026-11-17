@@ -6,7 +6,9 @@ expect the following files in this folder (paths can be changed in
 
 | File | Content | Produced by / source |
 |---|---|---|
-| `phyloseq_obj_F_uhgg_sel.rds` | phyloseq object: species abundances (Bracken, UHGG v2.0.2, normalised by genome length), UHGG taxonomy and sample metadata | `preprocessing/shotgun_pipeline.sh` + phyloseq construction |
+| `genomes_all_metadata_equiparacio_kraken.tsv` | UHGG v2.0.2 genome metadata (`Lineage`, `Length`) with a `species` column matching the Kraken2 species names | UHGG v2.0.2 `genomes-all_metadata.tsv` (used by `preprocessing/post_kraken.R`) |
+| `Metadata_COVID_ICO_v5.xlsx` | Clinical metadata, one row per kit | REDCap export (used by `preprocessing/post_kraken.R`) |
+| `phyloseq_obj_F_uhgg_sel.rds` | phyloseq object: species abundances (Bracken, UHGG v2.0.2, normalised by genome length), UHGG taxonomy and sample metadata | `preprocessing/shotgun_pipeline.sh` + `preprocessing/post_kraken.R` |
 | `phyloseq_obj_CRA003945.rds` | Same for the external validation cohort | Raw reads from the NGDC Genome Sequence Archive, accession CRA003945 |
 | `GCAT_phyloseqobject_BEC.rds` | GCAT Microbiome cohort (healthy reference) | GCAT \| Genomes for Life (access upon request) |
 | `cytokine_viral_load_covid.xlsx` | Faecal cytokines (sheet 1) and faecal SARS-CoV-2 RNA (sheet 2) | Laboratory measurements |

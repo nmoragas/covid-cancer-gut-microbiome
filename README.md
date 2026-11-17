@@ -20,12 +20,13 @@ Prospective multicentre study (Vall d'Hebron University Hospital and Catalan Ins
 │   └── gmhi.R                # Gut Microbiome Health Index
 ├── preprocessing/
 │   ├── shotgun_pipeline.sh   # raw reads -> species abundance table
-│   └── config.example.sh
+│   ├── config.example.sh
+│   └── post_kraken.R         # sample clean-up, genome-length normalisation, phyloseq
 ├── analysis/
 │   ├── 02_diversity.R             # alpha / beta diversity        (generic)
 │   ├── 03_differential_abundance.R# ANCOM-BC + LinDA               (generic)
-│   ├── 03b_da_overlap.R           # overlap of DA species across contrasts
-│   ├── 04_lasso_model.R           # LASSO prediction model
+│   ├── 03b_da_overlap.R           # overlap of DA species across contrasts (helper)
+│   ├── 04_lasso_model.R           # LASSO model of COVID-19 severity
 │   ├── 05_external_validation.R   # validation in CRA003945
 │   ├── 06_follow_up.R             # longitudinal active vs recovered
 │   ├── 07_cytokines.R             # faecal cytokines
@@ -56,6 +57,7 @@ comparison is passed as an argument and defined in `config/comparisons.R`
 cd preprocessing
 cp config.example.sh config.sh     # edit paths
 qsub shotgun_pipeline.sh
+Rscript post_kraken.R              # -> phyloseq object
 ```
 
 | Step | Tool | Settings |
@@ -67,6 +69,7 @@ qsub shotgun_pipeline.sh
 | Taxonomic profiling | Kraken2 2.1.2 (UHGG v2.0.2) | `--confidence 0.1` |
 | Abundance re-estimation | Bracken 2.2 | species level, `-r 150 -t 10` |
 | Abundance table | KrakenTools | `kreport2mpa.py`, `combine_mpa.py` |
+| Normalisation | `post_kraken.R` | Bracken reads / genome length (Mb) of the UHGG representative genome |
 
 The external validation cohort (CRA003945, NGDC Genome Sequence Archive) was
 downloaded and processed with the same pipeline.
@@ -83,7 +86,7 @@ for c in case_control timepoint severity mortality mortality_covid mortality_non
   Rscript analysis/03_differential_abundance.R $c
 done
 Rscript analysis/03b_da_overlap.R
-Rscript analysis/04_lasso_model.R severity
+Rscript analysis/04_lasso_model.R
 Rscript analysis/05_external_validation.R
 Rscript analysis/06_follow_up.R
 Rscript analysis/07_cytokines.R
@@ -108,7 +111,6 @@ unrarefied (Chao1) counts.
 | Fig 2d, Supp Table 3 | `03_differential_abundance.R timepoint` |
 | Fig 2e, Supp Fig 1e | `02_diversity.R severity` |
 | Fig 2f, Supp Table 4 | `03_differential_abundance.R severity` |
-| Fig 2g | `03b_da_overlap.R` |
 | Supp Fig 1d | `06_follow_up.R` |
 | Fig 4d, Fig 4e | `07_cytokines.R` |
 | Fig 6a, Supp Table 12 | `02_diversity.R mortality` |
@@ -116,23 +118,23 @@ unrarefied (Chao1) counts.
 | Supp Fig 3a | `02_diversity.R mortality_4groups` |
 | Supp Fig 3c | `07_cytokines.R` |
 | Fig 7a, Fig 7b, Supp Table 14 | `08_gmhi.R` |
-| Fig 8a | `04_lasso_model.R severity` |
+| Fig 8a | `04_lasso_model.R` |
 | Fig 8b | `05_external_validation.R` |
+| Fig 8c–e | *pending* <!-- TODO --> |
+| Supp Fig 1c | *pending* <!-- TODO --> |
+| Supp Fig 3d | *pending* <!-- TODO --> |
 
 ### Analyses not included in this repository
 
-<!-- TODO: confirm the author of each analysis -->
 The following analyses were performed by **Fiorella Ruiz-Pace** (Paolo Nuciforo's
 group, Vall d'Hebron Institute of Oncology) and are not part of this repository:
 
 - Table 1 and Table 2 (clinical characteristics, systemic inflammatory markers)
+- Overlap of differentially abundant species across contrasts (Fig 2g)
 - Systemic inflammatory markers and their correlation with species (Fig 3, Fig 6c, Supp Fig 3b)
 - Faecal SARS-CoV-2 RNA (Fig 4a–c)
 - Multivariable and Firth logistic regression models of mortality (Fig 5, Supp Fig 2, Supp Tables 8–10)
-- Faecal cytokines in the CRC subgroup (Supp Fig 3d)
 - External colorectal cancer cohorts (Fig 7c–d)
-- Mortality prediction models (Fig 8c–e)
-- Trend analysis across infection stages (Supp Fig 1c)
 
 ## Data availability
 

@@ -7,7 +7,6 @@
 #   labels      display labels for each level (same order as the factor levels)
 #   colours     colours for each level
 #   da_covariates  covariates added to the differential abundance models
-#   model_covariates  clinical covariates offered to the LASSO model
 #
 # Level names are kept syntactic (no spaces/accents) because they become
 # coefficient names in ANCOM-BC / LinDA.
@@ -63,8 +62,7 @@ COMPARISONS <- list(
     },
     labels  = c("Asymptomatic/Mild", "Hospitalised"),
     colours = c("lightcoral", "salmon4"),
-    da_covariates    = NULL,
-    model_covariates = c("age")
+    da_covariates    = NULL
   ),
 
   # --- Severity with three levels (exploratory) -----------------------------

@@ -20,6 +20,8 @@
 #       (local): bash shotgun_pipeline.sh config.sh
 #
 # Output: ${OUTDIR}/species/bracken_abundance_species_mpa.txt
+#         ${OUTDIR}/read_counts_clean.tsv
+# Next step: Rscript post_kraken.R (genome-length normalisation + phyloseq)
 # The same pipeline was used for the MARATÓ cohort and for the external
 # validation cohort (CRA003945).
 # =============================================================================
@@ -121,6 +123,11 @@ while read -r id _ _; do
     &> "${D3_TMP}/${id}_cleaning.txt"
 done < "${SAMPLES}"
 check_files "${D3_OUT}" "*_Q${QUALITY}.m?.fq" $((N * 2))
+
+# Number of clean reads per file (input to Kraken2)
+for fq in "${D3_OUT}"/*.fq; do
+  echo -e "$(basename "${fq}")\t$(( $(wc -l < "${fq}") / 4 ))"
+done > "${OUTDIR}/read_counts_clean.tsv"
 
 # -----------------------------------------------------------------------------
 # 4. QC after trimming

@@ -75,7 +75,7 @@ roc_obj <- roc(y, pred_n, quiet = TRUE)
 ci_auc  <- ci.auc(roc_obj)
 p_auc   <- verification::roc.area(y, pred_n)$p.value
 
-pred_bin <- as.numeric(pred_n >= TH)
+pred_bin <- as.numeric(pred_n > TH)
 cm <- table(predicted = factor(pred_bin, 0:1), true = factor(y, 0:1))
 perf <- data.frame(
   n_ambulatory = sum(y == 0), n_hospitalized = sum(y == 1),
