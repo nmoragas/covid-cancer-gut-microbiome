@@ -150,7 +150,7 @@ GMHI implementation adapted from Gupta *et al.*, *Nat Commun* 2020.
 
 ## Contact
 
-Núria Moragas — *[email]*
+Núria Moragas — *nmoragas@live.com*
 
 ## License
 
