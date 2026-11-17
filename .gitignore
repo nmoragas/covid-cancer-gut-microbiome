@@ -1,0 +1,19 @@
+# Results and intermediate files
+results/
+logs/
+temp/
+out/
+*.rds
+*.RData
+.Rhistory
+.Rproj.user/
+
+# Input data (patient data are not shared in this repository)
+data/*
+!data/README.md
+
+# Pipeline configuration with local paths
+preprocessing/config.sh
+
+# OS
+.DS_Store
